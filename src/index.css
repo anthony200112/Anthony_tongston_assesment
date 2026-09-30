@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper-100 text-ink-900 font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-paper-50 border border-paper-300 rounded-lg shadow-sm;
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:border-ink-300;
+  }
+  .btn-primary {
+    @apply bg-forest-500 text-paper-50 font-semibold rounded-md px-4 py-2 text-sm transition-colors hover:bg-forest-600;
+  }
+  .btn-secondary {
+    @apply border border-ink-300 text-ink-700 font-medium rounded-md px-4 py-2 text-sm transition-colors hover:bg-paper-200;
+  }
+  .input-field {
+    @apply w-full rounded-md border border-paper-300 bg-paper-50 px-3 py-2 text-sm text-ink-900 placeholder-ink-400 focus:border-forest-500 focus:ring-1 focus:ring-forest-500 focus:outline-none;
+  }
+  .tag-badge {
+    @apply inline-block rounded px-2 py-0.5 text-xs font-medium bg-forest-50 text-forest-600;
+  }
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-ink-400;
+  }
+  .stat-number {
+    @apply font-serif text-3xl font-semibold text-ink-900 tabular-nums;
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "Tongston T-World API",
+    "description": "Full API collection for the Tongston T-World Module — content, AI summarization, tokenized rewards, and media.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "description": "Change to your Render backend URL in production"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "Auto-populated after login"
+    },
+    {
+      "key": "contentId",
+      "value": "",
+      "description": "Auto-populated after creating content"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.environment.set('token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@tongston.com\",\n  \"password\": \"Admin123!\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "item": [
+        {
+          "name": "Create Content",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) { pm.environment.set('contentId', json.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/content",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Understanding Tokenized Incentives\",\n  \"body\": \"Tokenized incentive systems reward learners for completing meaningful tasks. By tying rewards to verifiable actions, platforms create a transparent feedback loop.\",\n  \"tags\": [\"education\", \"tokens\", \"ai\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "List Content (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/content?tag=ai&page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["content"], "query": [ { "key": "tag", "value": "ai" }, { "key": "page", "value": "1" }, { "key": "limit", "value": "20" } ] }
+          }
+        },
+        {
+          "name": "Get Single Content",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/content/{{contentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        {
+          "name": "Summarize Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/content/{{contentId}}/ai/summarize",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tone\": \"professional\",\n  \"length\": \"medium\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tokens",
+      "item": [
+        {
+          "name": "Get Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/tokens/balance"
+          }
+        },
+        {
+          "name": "Get History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/tokens/history"
+          }
+        },
+        {
+          "name": "Convert to MOCK_USDT",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/tokens/convert",
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 100,\n  \"toAsset\": \"MOCK_USDT\"\n}" }
+          }
+        },
+        {
+          "name": "Convert to MOCK_ETH",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/tokens/convert",
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 200,\n  \"toAsset\": \"MOCK_ETH\"\n}" }
+          }
+        },
+        {
+          "name": "Withdraw Tokens",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/tokens/withdraw",
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 50,\n  \"address\": \"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "item": [
+        {
+          "name": "Upload (Mock Cloudinary)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/media/upload",
+            "body": { "mode": "raw", "raw": "{\n  \"fileName\": \"document.pdf\",\n  \"contentType\": \"application/pdf\"\n}" }
+          }
+        },
+        {
+          "name": "Promote to S3 (Mock)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/media/MEDIA_ID/promote"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+        }
+      ]
+    }
+  ]
+}
